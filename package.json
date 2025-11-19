@@ -11,7 +11,8 @@
     "type-check": "tsc --noEmit",
     "prepare": "husky install",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "seed": "tsx dataSeed.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,css,md,json}": "prettier --write"
@@ -19,7 +20,12 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.2",
     "axios": "^1.12.2",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.2.3",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.547.0",
+    "mongodb": "^7.0.0",
+    "mongoose": "^8.19.4",
     "next": "^15.0.0",
     "next-themes": "^0.4.6",
     "react": "^18.2.0",
@@ -33,6 +39,9 @@
     "@storybook/addon-a11y": "^9.1.13",
     "@storybook/addon-docs": "^9.1.13",
     "@storybook/nextjs": "^9.1.13",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/dotenv": "^6.1.1",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -49,6 +58,7 @@
     "prettier": "^3.6.2",
     "storybook": "^9.1.13",
     "tailwindcss": "^3.3.0",
+    "tsx": "^4.20.6",
     "typescript": "^5",
     "vitest": "^4.0.2"
   }
