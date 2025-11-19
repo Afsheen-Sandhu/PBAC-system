@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { useLoginUserMutation } from "@/services/userApi";
 import { setAuth } from "@/lib/store/slices/counter/auth-slice";
 import { AppDispatch } from "@/lib/store/store";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [result, setResult] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const [loginUser, { isLoading }] = useLoginUserMutation();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,7 +28,7 @@ export default function LoginPage() {
 
       dispatch(setAuth({ user, token }));
       setResult(message || "Login successful");
-      // router.push("/dashboard"); // optional redirect
+      router.push("/dashboard");
     } catch (err: any) {
       const errorMessage =
         err?.data?.error || err?.message || "Login failed";

@@ -7,6 +7,6 @@ export const apiSlice = createApi({
   baseQuery: axiosBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL,
   }),
-  tagTypes: ["User", "Product", "Post"],
+  tagTypes: ["User", "Product", "Post", "AdminUsers"],
   endpoints: () => ({}),
 });

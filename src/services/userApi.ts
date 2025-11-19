@@ -1,5 +1,10 @@
 import { apiSlice } from "./api";
-import { User, LoginRequest, LoginResponse } from "@/types/user";
+import {
+  User,
+  LoginRequest,
+  LoginResponse,
+  AdminUsersResponse,
+} from "@/types/user";
 
 export const userApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -19,9 +24,34 @@ export const userApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+
+    getAdminUsers: builder.query<AdminUsersResponse, void>({
+      query: () => ({
+        url: "/api/admin/users",
+        method: "get",
+      }),
+      providesTags: ["AdminUsers"],
+    }),
+
+    updateAdminUser: builder.mutation<
+      { user: AdminUsersResponse["users"][number] },
+      { userId: string; roleId?: string | null; permissionIds?: string[] }
+    >({
+      query: ({ userId, ...body }) => ({
+        url: `/api/admin/users/${userId}`,
+        method: "patch",
+        data: body,
+      }),
+      invalidatesTags: ["AdminUsers"],
+    }),
   }),
 
   overrideExisting: false,
 });
 
-export const { useGetUserQuery, useLoginUserMutation } = userApi;
+export const {
+  useGetUserQuery,
+  useLoginUserMutation,
+  useGetAdminUsersQuery,
+  useUpdateAdminUserMutation,
+} = userApi;

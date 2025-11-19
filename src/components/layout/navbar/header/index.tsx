@@ -2,13 +2,31 @@
 
 import { ThemeToggle } from "@/components/ui/theme/ThemeToggle";
 import Link from "next/link";
-import { useAppSelector } from "@/lib/store/storeHooks";
+import { useEffect } from "react";
+import { useAppSelector, useAppDispatch } from "@/lib/store/storeHooks";
 import LogoutButton from "@/components/ui/logout-button";
 import { LogIn, UserPlus } from "lucide-react";
+import { setAuth } from "@/lib/store/slices/counter/auth-slice";
 
 export function Header() {
   const user = useAppSelector((state) => state.auth.user);
+  const dispatch = useAppDispatch();
   const displayName = user?.name || user?.email || "User";
+
+  useEffect(() => {
+    if (user) return;
+    if (typeof window === "undefined") return;
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+    if (storedToken && storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        dispatch(setAuth({ token: storedToken, user: parsedUser }));
+      } catch (error) {
+        console.error("Failed to parse stored user", error);
+      }
+    }
+  }, [user, dispatch]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
@@ -42,6 +60,12 @@ export function Header() {
           <ThemeToggle />
           {user ? (
             <>
+              <Link
+                href="/dashboard"
+                className="rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                Dashboard
+              </Link>
               <span className="hidden text-sm font-medium text-muted-foreground sm:inline-block">
                 Hi, {displayName}
               </span>
