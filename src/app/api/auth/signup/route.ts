@@ -22,17 +22,17 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await hashPassword(password);
 
-    // Assign admin role by default
-    const adminRole = await Role.findOne({ name: "admin" });
-    if (!adminRole) {
-      return NextResponse.json({ error: "Admin role not found" }, { status: 500 });
+    // Assign student role by default
+    const studentRole = await Role.findOne({ name: "student" });
+    if (!studentRole) {
+      return NextResponse.json({ error: "Student role not found" }, { status: 500 });
     }
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
-      role: adminRole._id,
-      permissions: adminRole.permissions,
+      role: studentRole._id,
+      permissions: studentRole.permissions,
     });
 
     await newUser.save();

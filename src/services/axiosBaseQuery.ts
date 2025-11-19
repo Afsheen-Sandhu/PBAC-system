@@ -2,6 +2,7 @@
 import axiosInstance from "@/lib/axios/AxiosInstance";
 import { BaseQueryFn } from "@reduxjs/toolkit/query";
 import { AxiosRequestConfig, AxiosError } from "axios";
+import { RootState } from "@/lib/store/store";
 
 // ✅ Type for error responses
 export interface AxiosBaseQueryError {
@@ -26,13 +27,21 @@ export type AxiosBaseQueryType = BaseQueryFn<
 
 export const axiosBaseQuery =
   ({ baseUrl }: { baseUrl?: string } = {}): AxiosBaseQueryType =>
-  async ({ url, method, data, params }) => {
+  async ({ url, method, data, params }, api) => {
+    const state = api.getState() as RootState;
+    const token = state.auth.token;
+
     try {
       const result = await axiosInstance({
         url: baseUrl ? `${baseUrl}${url}` : url,
         method,
         data,
         params,
+        headers: token
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : undefined,
       });
 
       return { data: result };
