@@ -114,7 +114,7 @@ export default function DashboardClient({ user }: { user: User }) {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setAuth({ user, token: undefined }));
+    dispatch(setAuth({ user, token: null }));
   }, [user, dispatch]);
 
   const roleName = getRoleName(user?.role)?.toLowerCase() ?? "default";

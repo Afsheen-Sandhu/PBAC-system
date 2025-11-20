@@ -2,10 +2,10 @@
 
 import { Provider } from "react-redux";
 import store from "@/lib/store/store";
-import { useAppSelector } from "@/lib/store/store-hooks";
-import { GlobalLoadingOverlay } from "@/components/ui/global-loading-overlay";
+import { useAppSelector } from "@/lib/hooks/store-hooks";
+import { GlobalLoadingOverlay } from "@/components/ui/overlay";
 
-interface ReduxProviderProps {
+interface ReduxProviderProps { 
   children: React.ReactNode;
 }
 

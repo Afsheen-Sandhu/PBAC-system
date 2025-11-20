@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
         })),
       })),
       permissions: permissions.map((permission) => ({
-        id: permission._id.toString(),
+        id: permission._id!.toString(),
         name: permission.name,
       })),
     });
