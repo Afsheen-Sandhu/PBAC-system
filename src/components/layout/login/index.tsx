@@ -7,7 +7,7 @@ import { setAuth } from "@/lib/store/slices/counter/auth-slice";
 import { AppDispatch } from "@/lib/store/store";
 import { useRouter } from "next/navigation";
 import { AuthCard } from "@/components/auth/AuthCard";
-import { AuthInput } from "@/components/auth/AuthInput";
+import { Input } from "@/components/ui/input/Input";
 import { Button } from "@/components/ui/button/Button";
 
 export default function LoginPage() {
@@ -23,18 +23,16 @@ export default function LoginPage() {
     setResult("");
     try {
       const response = await loginUser({ email, password }).unwrap();
-      const { user, token, message } = response;
+      const { user, message } = response;
 
       // persist auth for interceptors/future sessions
-      localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      dispatch(setAuth({ user, token }));
+      dispatch(setAuth({ user, token: null as string | null }));
       setResult(message || "Login successful");
       router.push("/dashboard");
     } catch (err: any) {
-      const errorMessage =
-        err?.data?.error || err?.message || "Login failed";
+      const errorMessage = err?.data?.error || err?.message || "Login failed";
       setResult(errorMessage);
     }
   };
@@ -48,7 +46,7 @@ export default function LoginPage() {
       footerLinkLabel="Create one"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <AuthInput
+        <Input
           label="Email"
           name="email"
           type="email"
@@ -57,7 +55,7 @@ export default function LoginPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <AuthInput
+        <Input
           label="Password"
           name="password"
           type="password"

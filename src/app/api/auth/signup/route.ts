@@ -1,53 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hashPassword } from "@/lib/hash/Hash";
 import User from "@/lib/models/User";
-import Role from "@/lib/models/Role";
 import { connectToDB } from "@/lib/mongo/mongo";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
   try {
     await connectToDB();
-
     const data = await req.json();
     const { name, email, password } = data;
 
     if (!name || !email || !password) {
-      return NextResponse.json({ error: "Please fill all the fields" }, { status: 400 });
+      return NextResponse.json({ message: "Name, email and password required" }, { status: 400 });
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return NextResponse.json({ error: "User already exists" }, { status: 400 });
+      return NextResponse.json({ message: "User already exists" }, { status: 400 });
     }
 
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Assign student role by default
-    const studentRole = await Role.findOne({ name: "student" });
-    if (!studentRole) {
-      return NextResponse.json({ error: "Student role not found" }, { status: 500 });
-    }
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
-      role: studentRole._id,
-      permissions: studentRole.permissions,
     });
 
     await newUser.save();
 
     return NextResponse.json(
-      { message: "Registration successful", user: newUser },
+      {
+        message: "User created successfully",
+      },
       { status: 201 }
     );
   } catch (error) {
     if (error instanceof Error) {
       console.error('Signup Error:', error.message, error.stack);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ message: error.message }, { status: 500 });
     } else {
       console.error('Signup Error:', error);
-      return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
+      return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
     }
   }
 }

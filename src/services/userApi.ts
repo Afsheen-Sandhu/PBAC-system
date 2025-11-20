@@ -25,6 +25,22 @@ export const userApi = apiSlice.injectEndpoints({
       invalidatesTags: ["User"],
     }),
 
+    signupUser: builder.mutation<
+      LoginResponse,
+      Omit<LoginRequest, "email" | "password"> & {
+        name: string;
+        email: string;
+        password: string;
+      }
+    >({
+      query: (body) => ({
+        url: "/api/auth/signup",
+        method: "post",
+        data: body,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
     getAdminUsers: builder.query<AdminUsersResponse, void>({
       query: () => ({
         url: "/api/admin/users",
@@ -52,6 +68,7 @@ export const userApi = apiSlice.injectEndpoints({
 export const {
   useGetUserQuery,
   useLoginUserMutation,
+  useSignupUserMutation,
   useGetAdminUsersQuery,
   useUpdateAdminUserMutation,
 } = userApi;

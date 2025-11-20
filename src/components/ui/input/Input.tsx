@@ -1,12 +1,12 @@
 "use client";
 
-interface AuthInputProps
+interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  name: string;
+  name: string; 
 }
 
-export function AuthInput({ label, name, ...props }: AuthInputProps) {
+export function Input({ label, name, ...props }: InputProps) {
   return (
     <div className="space-y-1">
       <label

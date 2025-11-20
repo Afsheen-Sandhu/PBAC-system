@@ -10,10 +10,19 @@ export interface AuthPayload {
 
 export function getAuthToken(req: NextRequest): string | null {
   const header = req.headers.get("authorization");
-  if (!header) return null;
-  const [scheme, token] = header.split(" ");
-  if (scheme !== "Bearer" || !token) return null;
-  return token;
+  if (header) {
+    const [scheme, token] = header.split(" ");
+    if (scheme === "Bearer" && token) {
+      return token;
+    }
+  }
+
+  const cookie = req.cookies.get("token");
+  if (cookie) {
+    return cookie.value;
+  }
+
+  return null;
 }
 
 export function verifyAuth(req: NextRequest): AuthPayload | null {
@@ -38,5 +47,3 @@ export function requireAdmin(req: NextRequest): AuthPayload | null {
   if (!isAdmin) return null;
   return payload;
 }
-
-

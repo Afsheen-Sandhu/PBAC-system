@@ -3,7 +3,7 @@
 import { ThemeToggle } from "@/components/ui/theme/ThemeToggle";
 import Link from "next/link";
 import { useEffect } from "react";
-import { useAppSelector, useAppDispatch } from "@/lib/store/storeHooks";
+import { useAppSelector, useAppDispatch } from "@/lib/store/store-hooks";
 import LogoutButton from "@/components/ui/logout-button";
 import { LogIn, UserPlus } from "lucide-react";
 import { setAuth } from "@/lib/store/slices/counter/auth-slice";

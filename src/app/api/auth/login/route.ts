@@ -5,6 +5,7 @@ import Permission from "@/lib/models/Permission";
 import { connectToDB } from "@/lib/mongo/mongo";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +14,10 @@ export async function POST(req: NextRequest) {
     const { email, password } = data;
 
     if (!email || !password) {
-      return NextResponse.json({ error: "Email and password required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Email and password required" },
+        { status: 400 }
+      );
     }
 
     const user = await User.findOne({ email })
@@ -33,7 +37,10 @@ export async function POST(req: NextRequest) {
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 400 }
+      );
     }
 
     // Prepare payload for JWT
@@ -42,7 +49,8 @@ export async function POST(req: NextRequest) {
         ? user.role.permissions?.map((perm: any) => perm.name)
         : [];
 
-    const directPermissionNames = user.permissions?.map((perm: any) => perm.name) ?? [];
+    const directPermissionNames =
+      user.permissions?.map((perm: any) => perm.name) ?? [];
 
     const mergedPermissions = Array.from(
       new Set([...(rolePermissionNames || []), ...directPermissionNames])
@@ -71,21 +79,31 @@ export async function POST(req: NextRequest) {
       ...userData,
       role: roleInfo,
     };
-    return NextResponse.json(
-      {
-        message: "Login successful",
-        user: { ...sanitizedUser, role: roleInfo, permissions: mergedPermissions },
-        token,
-      },
-      { status: 200 }
-    );
+
+    const response = NextResponse.json({
+      message: "Login successful",
+      user: { ...sanitizedUser, role: roleInfo, permissions: mergedPermissions },
+    });
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60, // 1 hour
+    });
+
+    return response;
   } catch (error) {
     if (error instanceof Error) {
-      console.error('Login Error:', error.message, error.stack);
+      console.error("Login Error:", error.message, error.stack);
       return NextResponse.json({ error: error.message }, { status: 500 });
     } else {
-      console.error('Login Error:', error);
-      return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
+      console.error("Login Error:", error);
+      return NextResponse.json(
+        { error: "Something went wrong" },
+        { status: 500 }
+      );
     }
   }
 }
