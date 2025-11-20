@@ -6,6 +6,9 @@ import { useLoginUserMutation } from "@/services/userApi";
 import { setAuth } from "@/lib/store/slices/counter/auth-slice";
 import { AppDispatch } from "@/lib/store/store";
 import { useRouter } from "next/navigation";
+import { AuthCard } from "@/components/auth/AuthCard";
+import { AuthInput } from "@/components/auth/AuthInput";
+import { Button } from "@/components/ui/button/Button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -37,32 +40,47 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-2xl font-semibold mb-4">Sign In</h1>
+    <AuthCard
+      title="Welcome back"
+      subtitle="Sign in to access your personalized dashboard."
+      footerText="Don't have an account?"
+      footerLinkHref="/signup"
+      footerLinkLabel="Create one"
+    >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
+        <AuthInput
+          label="Email"
           name="email"
           type="email"
-          placeholder="Email"
-          className="input"
+          placeholder="you@example.com"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <input
+        <AuthInput
+          label="Password"
           name="password"
           type="password"
-          placeholder="Password"
-          className="input"
+          placeholder="••••••••"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className="w-full bg-black text-white py-2 rounded-md" disabled={isLoading}>
+        <Button
+          type="submit"
+          variant="primary"
+          size="md"
+          disabled={isLoading}
+          className="w-full"
+        >
           {isLoading ? "Signing in..." : "Sign In"}
-        </button>
+        </Button>
       </form>
-      {result && <p className="mt-4 text-sm text-red-500">{result}</p>}
-    </div>
+      {result && (
+        <p className="mt-4 text-sm text-error" role="alert">
+          {result}
+        </p>
+      )}
+    </AuthCard>
   );
 }
