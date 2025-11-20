@@ -3,12 +3,12 @@
 import {
   useGetAdminUsersQuery,
   useUpdateAdminUserMutation,
-} from "@/services/userApi";
+} from "@/services/user-api";
 import type { AdminUser, PermissionItem, RoleInfo } from "@/types/user";
 import { useCallback } from "react";
-import { UserRow } from "./UserRow";
+import { UserRow } from "./user-table";
 import { useDispatch } from "react-redux";
-import { setLoading } from "@/lib/store/slices/counter/loading-slice";
+import { setLoading } from "@/lib/store/slices/loading-slice";
 import {
   Table,
   TableHeader,

@@ -55,7 +55,7 @@ export const userApi = apiSlice.injectEndpoints({
     >({
       query: ({ userId, ...body }) => ({
         url: `/api/admin/users/${userId}`,
-        method: "put",
+        method: "patch",
         data: body,
       }),
       invalidatesTags: ["AdminUsers"],

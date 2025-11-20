@@ -1,6 +1,8 @@
 "use client";
 
-import { Spinner } from "./spinner";
+import { Spinner } from "../spinner";
+
+
 
 interface GlobalLoadingOverlayProps {
   isLoading: boolean;

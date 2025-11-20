@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import LogoutButton from "@/components/ui/logout-button";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import type { User } from "@/types/user";
-import AdminUserManager from "@/components/dashboard/AdminUserManager";
+import AdminUserManager from "@/components/layout/dashboard/admin-user-manager";
+import { useAppDispatch } from "@/lib/hooks/store-hooks";
+import { setAuth } from "@/lib/store/slices/auth-slice";
 
 const SECTION_CONFIG: Record<
   string,
@@ -110,6 +111,12 @@ function getRoleName(role: string | { name?: string } | null | undefined) {
 }
 
 export default function DashboardClient({ user }: { user: User }) {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setAuth({ user, token: undefined }));
+  }, [user, dispatch]);
+
   const roleName = getRoleName(user?.role)?.toLowerCase() ?? "default";
   const panel = rolePanels[roleName] ?? rolePanels.default;
   const isAdmin = roleName === "admin";
@@ -142,7 +149,6 @@ export default function DashboardClient({ user }: { user: User }) {
               Role: <span className="capitalize">{roleName}</span>
             </p>
           </div>
-          <LogoutButton className="rounded-md bg-muted px-4 py-2 text-sm font-medium hover:bg-muted/80" />
         </div>
       </header>
 

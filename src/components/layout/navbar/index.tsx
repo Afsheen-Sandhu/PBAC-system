@@ -1,17 +1,19 @@
 "use client";
 
-import { ThemeToggle } from "@/components/ui/theme/ThemeToggle";
+import { ThemeToggle } from "@/components/ui/theme";
 import Link from "next/link";
 import { useEffect } from "react";
-import { useAppSelector, useAppDispatch } from "@/lib/store/store-hooks";
-import LogoutButton from "@/components/ui/logout-button";
+import { useAppSelector, useAppDispatch } from "@/lib/hooks/store-hooks";
 import { LogIn, UserPlus } from "lucide-react";
-import { setAuth } from "@/lib/store/slices/counter/auth-slice";
+import { setAuth } from "@/lib/store/slices/auth-slice";
+import { Button } from "@/components/ui/button";
+import { useLogout } from "@/lib/hooks/useLogout";
 
 export function Header() {
   const user = useAppSelector((state) => state.auth.user);
   const dispatch = useAppDispatch();
   const displayName = user?.name || user?.email || "User";
+  const handleLogout = useLogout();
 
   useEffect(() => {
     if (user) return;
@@ -35,26 +37,6 @@ export function Header() {
           <Link className="mr-6 flex items-center space-x-2" href="/">
             <span className="font-bold sm:inline-block">My App</span>
           </Link>
-          <nav className="flex items-center space-x-6 text-sm font-medium">
-            <Link
-              href="/about"
-              className="text-foreground hover:text-muted-foreground transition-colors"
-            >
-              About
-            </Link>
-            <Link
-              href="/blog"
-              className="text-foreground hover:text-muted-foreground transition-colors"
-            >
-              Blog
-            </Link>
-            <Link
-              href="/docs"
-              className="text-foreground hover:text-muted-foreground transition-colors"
-            >
-              Docs
-            </Link>
-          </nav>
         </div>
         <div className="flex flex-1 items-center justify-end gap-3">
           <ThemeToggle />
@@ -69,7 +51,12 @@ export function Header() {
               <span className="hidden text-sm font-medium text-muted-foreground sm:inline-block">
                 Hi, {displayName}
               </span>
-              <LogoutButton className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted/80 transition-colors" />
+              <Button
+                onClick={handleLogout}
+                className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted/80 transition-colors"
+              >
+                Logout
+              </Button>
             </>
           ) : (
             <div className="flex items-center gap-2">

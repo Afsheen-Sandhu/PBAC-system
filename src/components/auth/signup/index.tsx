@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useSignupUserMutation } from "@/services/userApi";
-import { AuthCard } from "@/components/auth/AuthCard";
-import { Input } from "@/components/ui/input/Input";
-import { Button } from "@/components/ui/button/Button";
+import { useSignupUserMutation } from "@/services/user-api";
+import { AuthCard } from "@/components/auth/shared/auth-card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function RegisterPage() {
   const [result, setResult] = useState("");

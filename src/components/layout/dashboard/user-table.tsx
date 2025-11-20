@@ -1,6 +1,6 @@
 import { memo } from "react";
 import type { AdminUser, PermissionItem, RoleInfo } from "@/types/user";
-import { Checkbox } from "@/components/ui/checkbox/Checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { TableRow, TableCell } from "@/components/ui/table";
 
 interface UserRowProps {

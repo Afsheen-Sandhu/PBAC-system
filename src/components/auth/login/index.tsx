@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useLoginUserMutation } from "@/services/userApi";
-import { setAuth } from "@/lib/store/slices/counter/auth-slice";
+import { useLoginUserMutation } from "@/services/user-api";
+import { setAuth } from "@/lib/store/slices/auth-slice";
 import { AppDispatch } from "@/lib/store/store";
 import { useRouter } from "next/navigation";
-import { AuthCard } from "@/components/auth/AuthCard";
-import { Input } from "@/components/ui/input/Input";
-import { Button } from "@/components/ui/button/Button";
+import { AuthCard } from "@/components/auth/shared/auth-card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");

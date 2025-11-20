@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { connectToDB } from "./src/lib/mongo/mongo";
 import User from "./src/lib/models/User";
 import Role from "./src/lib/models/Role";
-import { hashPassword } from "./src/lib/hash/Hash";
+import { hashPassword } from "./src/lib/hash";
 import dotenv from "dotenv";
 import path from "path";
 

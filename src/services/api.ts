@@ -1,6 +1,6 @@
 // src/services/api/apiSlice.ts
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { axiosBaseQuery } from "./axiosBaseQuery";
+import { axiosBaseQuery } from "./axios-base-query";
 
 export const apiSlice = createApi({
   reducerPath: "api",
