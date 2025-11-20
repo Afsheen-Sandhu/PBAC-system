@@ -14,6 +14,11 @@ function serializeUser(user: any) {
       ? {
           id: user.role._id.toString(),
           name: user.role.name,
+          permissions:
+            user.role.permissions?.map((perm: any) => ({
+              id: perm._id.toString(),
+              name: perm.name,
+            })) ?? [],
         }
       : null,
     permissions:
@@ -34,22 +39,40 @@ export async function GET(req: NextRequest) {
     await connectToDB();
 
     const [users, roles, permissions] = await Promise.all([
-      User.find()
-        .populate({ path: "role", model: Role, select: "name" })
-        .populate({ path: "permissions", model: Permission, select: "name" }),
-      Role.find().select("name"),
-      Permission.find().select("name"),
+      User.find({})
+        .populate({
+          path: "role",
+          model: Role,
+          select: "name permissions",
+          populate: {
+            path: "permissions",
+            model: Permission,
+            select: "name",
+          },
+        })
+        .populate({
+          path: "permissions",
+          model: Permission,
+          select: "name",
+        })
+        .lean(),
+      Role.find({}).populate("permissions").lean(),
+      Permission.find({}).lean(),
     ]);
 
     return NextResponse.json({
       users: users.map(serializeUser),
-      roles: roles.map((role) => ({
+      roles: roles.map((role: any) => ({
         id: role._id.toString(),
         name: role.name,
+        permissions: role.permissions.map((perm: any) => ({
+          id: perm._id.toString(),
+          name: perm.name,
+        })),
       })),
-      permissions: permissions.map((perm) => ({
-        id: perm._id.toString(),
-        name: perm.name,
+      permissions: permissions.map((permission) => ({
+        id: permission._id.toString(),
+        name: permission.name,
       })),
     });
   } catch (error) {
@@ -60,5 +83,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
-

@@ -1,6 +1,7 @@
 export interface RoleInfo {
   id: string;
   name: string;
+  permissions?: PermissionItem[];
 }
 
 export interface PermissionItem {

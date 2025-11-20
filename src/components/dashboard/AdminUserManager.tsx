@@ -28,14 +28,18 @@ export default function AdminUserManager() {
         setLoading({ isLoading: true, message: "Updating user role..." })
       );
       try {
-        await updateUser({ userId, roleId: roleId || null });
+        const role = data?.roles.find((r) => r.id === roleId);
+        const permissionIds = role?.permissions
+          ? role.permissions.map((p) => p.id)
+          : [];
+        await updateUser({ userId, roleId: roleId || null, permissionIds });
       } catch (err) {
         console.error("Failed to update role:", err);
       } finally {
         dispatch(setLoading({ isLoading: false }));
       }
     },
-    [updateUser, dispatch]
+    [updateUser, dispatch, data]
   );
 
   const handlePermissionToggle = useCallback(
@@ -106,20 +110,25 @@ export default function AdminUserManager() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.users.map((user) => (
-              <UserRow
-                key={user._id}
-                user={user}
-                roles={data.roles}
-                permissions={data.permissions}
-                onRoleChange={handleRoleChange}
-                onPermissionToggle={handlePermissionToggle}
-              />
-            ))}
+            {data.users.map((user) => {
+              const userRole = data.roles.find(
+                (role) => role.id === user.role?.id
+              );
+              const rolePermissions = userRole?.permissions || [];
+              return (
+                <UserRow
+                  key={user._id}
+                  user={user}
+                  roles={data.roles}
+                  permissions={rolePermissions}
+                  onRoleChange={handleRoleChange}
+                  onPermissionToggle={handlePermissionToggle}
+                />
+              );
+            })}
           </TableBody>
         </Table>
       </div>
     </section>
   );
 }
-

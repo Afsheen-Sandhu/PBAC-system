@@ -30,12 +30,16 @@ async function getUserDetails(userId: string) {
     return null;
   }
 
-const { password, ...userWithoutPassword } = user instanceof Array ? user[0] : user;
+  const userPerms = user.permissions?.map((p: any) => p.name) || [];
+
+  const { password, ...userWithoutPassword } =
+    user instanceof Array ? user[0] : user;
+  userWithoutPassword.permissions = userPerms;
   return userWithoutPassword;
 }
 
 export default async function DashboardPage() {
-  const session = getUser();
+  const session = await getUser();
 
   if (!session) {
     redirect("/login");

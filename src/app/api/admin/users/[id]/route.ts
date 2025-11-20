@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth/auth";
 import User from "@/lib/models/User";
 import Role from "@/lib/models/Role";
 import Permission from "@/lib/models/Permission";
+import { revalidatePath } from "next/cache";
 
 function serializeUser(user: any) {
   return {
@@ -85,6 +86,8 @@ export async function PATCH(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    revalidatePath("/dashboard");
+
     return NextResponse.json({ user: serializeUser(updatedUser) });
   } catch (error) {
     console.error("Admin user update failed:", error);
@@ -94,5 +97,3 @@ export async function PATCH(
     );
   }
 }
-
-

@@ -1,9 +1,11 @@
 import { useDispatch } from "react-redux";
 import { logout } from "../store/slices/counter/auth-slice";
 import { AppDispatch } from "../store/store";
+import { useRouter } from "next/navigation";
 
 export const useLogout = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
 
   const handleLogout = async () => {
     try {
@@ -15,6 +17,7 @@ export const useLogout = () => {
         localStorage.removeItem("user");
       }
       dispatch(logout());
+      router.push("/login");
     }
   };
 
