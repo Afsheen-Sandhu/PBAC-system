@@ -1,15 +1,26 @@
 import type { ReactNode } from "react";
 import type { User } from "@/types/user";
+import type { LucideIcon } from "lucide-react";
+import {
+  BarChart3,
+  BookOpen,
+  CheckCircle2,
+  GraduationCap,
+} from "lucide-react";
 
 export type SectionConfigType = {
   title: string;
   description: string;
   feature: (user: User) => ReactNode | null;
   requirements: string[];
+  slug: string;
+  icon: LucideIcon;
 };
 
 export const SECTION_CONFIG: Record<string, SectionConfigType> = {
   courseBuilder: {
+    slug: "courses",
+    icon: BookOpen,
     title: "Courses",
     description: "Create, edit, or delete courses you manage.",
     requirements: ["create_course", "edit_course", "delete_course"],
@@ -29,9 +40,12 @@ export const SECTION_CONFIG: Record<string, SectionConfigType> = {
           <p className="text-sm text-muted-foreground">
             You can manage the following course features:
           </p>
-          <ul className="list-disc pl-5 text-sm">
+          <ul className="space-y-1 text-sm">
             {actions.map((action) => (
-              <li key={action}>{action}</li>
+              <li key={action} className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                <span>{action}</span>
+              </li>
             ))}
           </ul>
         </div>
@@ -40,6 +54,8 @@ export const SECTION_CONFIG: Record<string, SectionConfigType> = {
   },
 
   classroomOps: {
+    slug: "classroom-ops",
+    icon: GraduationCap,
     title: "Classroom Ops",
     description: "Assign teachers, enroll students, and manage grades.",
     requirements: ["assign_teacher", "enroll_student", "grade_student"],
@@ -59,9 +75,12 @@ export const SECTION_CONFIG: Record<string, SectionConfigType> = {
           <p className="text-sm text-muted-foreground">
             Operational access granted:
           </p>
-          <ul className="list-disc pl-5 text-sm">
+          <ul className="space-y-1 text-sm">
             {actions.map((action) => (
-              <li key={action}>{action}</li>
+              <li key={action} className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-sky-500" />
+                <span>{action}</span>
+              </li>
             ))}
           </ul>
         </div>
@@ -70,6 +89,8 @@ export const SECTION_CONFIG: Record<string, SectionConfigType> = {
   },
 
   analytics: {
+    slug: "analytics",
+    icon: BarChart3,
     title: "Progress & Insights",
     description: "Monitor course progress and student results.",
     requirements: ["view_course", "view_results"],
@@ -82,14 +103,26 @@ export const SECTION_CONFIG: Record<string, SectionConfigType> = {
       if (!canViewCourse && !canViewResults) return null;
 
       return (
-        <div className="space-y-1 text-sm text-muted-foreground">
-          {canViewCourse && <p>✔ Access to course outlines & schedules.</p>}
-          {canViewResults && <p>✔ Access to performance dashboards.</p>}
+        <div className="space-y-3 text-sm text-muted-foreground">
+          {canViewCourse && (
+            <p className="flex items-center gap-2 text-foreground">
+              <CheckCircle2 className="h-4 w-4 text-indigo-500" />
+              <span>Access to course outlines & schedules.</span>
+            </p>
+          )}
+          {canViewResults && (
+            <p className="flex items-center gap-2 text-foreground">
+              <CheckCircle2 className="h-4 w-4 text-indigo-500" />
+              <span>Access to performance dashboards.</span>
+            </p>
+          )}
         </div>
       );
     },
   },
 };
+
+export type SectionKey = keyof typeof SECTION_CONFIG;
 
 export const rolePanels: Record<
   string,

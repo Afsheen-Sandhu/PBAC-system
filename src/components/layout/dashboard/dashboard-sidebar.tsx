@@ -1,43 +1,35 @@
 "use client";
 
-import Link from "next/link";
-import type { User } from "@/types/user";
-import { SECTION_CONFIG, getRoleName } from "./dashboard-config";
 import { useMemo } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ArrowUpRight } from "lucide-react";
+import type { User } from "@/types/user";
+import { getRoleName } from "./dashboard-config";
+import { cn } from "@/lib/utils";
 
 type DashboardSidebarProps = {
   user: User;
   isAdmin: boolean;
 };
 
-export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProps) {
+export default function DashboardSidebar({
+  user,
+  isAdmin,
+}: DashboardSidebarProps) {
+  const pathname = usePathname();
   const roleName = getRoleName(user?.role)?.toLowerCase() ?? "default";
 
   const navLinks = useMemo(() => {
-    const links = [{ label: "Dashboard", href: "#dashboard-overview" }];
+    const links = [{ label: "Overview", href: "/dashboard" }];
     if (isAdmin) {
       links.push(
-        { label: "Roles & permissions", href: "#role-permissions" },
-        { label: "User management", href: "#user-management" }
+        { label: "Roles & permissions", href: "/dashboard/roles-permissions" },
+        { label: "User management", href: "/dashboard/user-management" }
       );
     }
     return links;
   }, [isAdmin]);
-
-  const availableSections = useMemo(() => {
-    if (!user?.permissions?.length) return [];
-    return Object.values(SECTION_CONFIG)
-      .map((section) => {
-        const hasAnyPermission = section.requirements.some((perm) =>
-          user.permissions?.includes(perm)
-        );
-        if (!hasAnyPermission) return null;
-        return section;
-      })
-      .filter((section): section is (typeof SECTION_CONFIG)[string] =>
-        Boolean(section)
-      );
-  }, [user?.permissions]);
 
   return (
     <aside className="w-full lg:w-72">
@@ -61,39 +53,20 @@ export default function DashboardSidebar({ user, isAdmin }: DashboardSidebarProp
               <Link
                 key={link.href}
                 href={link.href}
-                className="flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                className={cn(
+                  "flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  pathname === link.href
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                )}
               >
                 <span>{link.label}</span>
-                <span aria-hidden="true">↗</span>
+                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             ))}
           </nav>
         </div>
 
-        <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Available tools
-          </p>
-          {availableSections.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Permissions pending. Contact an administrator.
-            </p>
-          ) : (
-            <ul className="space-y-2">
-              {availableSections.map((section) => (
-                <li
-                  key={section.title}
-                  className="rounded-md border border-dashed px-3 py-2"
-                >
-                  <p className="text-sm font-semibold">{section.title}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {section.description}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
       </div>
     </aside>
   );

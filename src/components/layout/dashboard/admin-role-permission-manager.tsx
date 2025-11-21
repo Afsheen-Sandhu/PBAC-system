@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Edit2, Trash2 } from "lucide-react";
 import type { RoleInfo, PermissionItem } from "@/types/user";
 import {
   useGetAdminRolesQuery,
@@ -221,9 +222,9 @@ export default function AdminRolePermissionManager() {
         </p>
       </div>
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-2">
-        <div>
-          <div className="rounded-lg border bg-background p-4 shadow-sm">
+      <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+        <div className="space-y-4">
+          <div className="rounded-lg border bg-background p-5 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-semibold">
                 {roleForm.id ? "Edit Role" : "Create Role"}
@@ -241,7 +242,7 @@ export default function AdminRolePermissionManager() {
             </div>
 
             <form onSubmit={handleRoleSubmit} className="space-y-4">
-              <div>
+              <div className="space-y-1">
                 <label className="text-sm font-medium text-foreground">
                   Role name
                 </label>
@@ -257,7 +258,7 @@ export default function AdminRolePermissionManager() {
                 />
               </div>
 
-              <div>
+              <div className="space-y-1">
                 <label className="text-sm font-medium text-foreground">
                   Description
                 </label>
@@ -274,7 +275,7 @@ export default function AdminRolePermissionManager() {
                 />
               </div>
 
-              <div>
+              <div className="space-y-1">
                 <div className="mb-2 flex items-center justify-between">
                   <label className="text-sm font-medium text-foreground">
                     Permissions
@@ -285,29 +286,40 @@ export default function AdminRolePermissionManager() {
                     </span>
                   )}
                 </div>
-                {permissions.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    No permissions yet. You can still save the role.
-                  </p>
-                ) : (
-                  <div className="grid max-h-48 grid-cols-2 gap-2 overflow-y-auto rounded-md border p-3">
-                    {permissions.map((permission) => (
-                      <label
-                        key={permission.id}
-                        className="flex items-center gap-2 text-sm"
-                      >
-                        <Checkbox
-                          checked={activePermissionIds.has(permission.id)}
-                          onChange={() =>
-                            handleRolePermissionToggle(permission.id)
-                          }
-                          disabled={isSavingRole}
-                        />
-                        <span>{permission.name}</span>
-                      </label>
-                    ))}
-                  </div>
-                )}
+                <div className="rounded-md border bg-muted/40 p-3">
+                  {permissions.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      No permissions yet. You can still save the role.
+                    </p>
+                  ) : (
+                    <div className="grid max-h-52 grid-cols-1 gap-2 overflow-y-auto md:grid-cols-2">
+                      {permissions.map((permission) => (
+                        <label
+                          key={permission.id}
+                          className="flex items-start gap-2 rounded-md bg-background px-2 py-1 text-sm shadow-xs"
+                        >
+                          <Checkbox
+                            checked={activePermissionIds.has(permission.id)}
+                            onChange={() =>
+                              handleRolePermissionToggle(permission.id)
+                            }
+                            disabled={isSavingRole}
+                          />
+                          <div>
+                            <p className="font-medium leading-snug">
+                              {permission.name}
+                            </p>
+                            {permission.description && (
+                              <p className="text-xs text-muted-foreground">
+                                {permission.description}
+                              </p>
+                            )}
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <Button type="submit" disabled={isSavingRole}>
@@ -328,25 +340,25 @@ export default function AdminRolePermissionManager() {
                 No roles have been created yet.
               </p>
             )}
-            {roles.map((role) => (
-              <div
-                key={role.id}
-                className="rounded-lg border bg-background p-4 shadow-sm"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <p className="text-base font-semibold">{role.name}</p>
+            <div className="divide-y rounded-lg border bg-card">
+              {roles.map((role) => (
+                <div
+                  key={role.id}
+                  className="flex flex-wrap items-start justify-between gap-4 px-4 py-3"
+                >
+                  <div className="space-y-1">
+                    <p className="font-semibold">{role.name}</p>
                     {role.description && (
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground max-w-xl">
                         {role.description}
                       </p>
                     )}
-                    <div className="mt-2 flex flex-wrap gap-2">
+                    <div className="mt-1 flex flex-wrap gap-1.5">
                       {role.permissions?.length ? (
                         role.permissions.map((perm) => (
                           <span
                             key={perm.id}
-                            className="rounded-full border px-2 py-0.5 text-xs"
+                            className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
                           >
                             {perm.name}
                           </span>
@@ -358,14 +370,15 @@ export default function AdminRolePermissionManager() {
                       )}
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
                     <Button
                       variant="secondary"
                       size="sm"
                       onClick={() => handleSelectRole(role)}
                       disabled={isSavingRole}
                     >
-                      Edit
+                      <span className="sr-only">Edit role</span>
+                      <Edit2 className="h-4 w-4" aria-hidden="true" />
                     </Button>
                     <Button
                       variant="outline"
@@ -374,17 +387,18 @@ export default function AdminRolePermissionManager() {
                       onClick={() => handleRoleDelete(role.id)}
                       disabled={isSavingRole}
                     >
-                      Delete
+                      <span className="sr-only">Delete role</span>
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
                     </Button>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
-        <div>
-          <div className="rounded-lg border bg-background p-4 shadow-sm">
+        <div className="space-y-4">
+          <div className="rounded-lg border bg-background p-5 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-semibold">
                 {permissionForm.id ? "Edit Permission" : "Create Permission"}
@@ -402,7 +416,7 @@ export default function AdminRolePermissionManager() {
             </div>
 
             <form onSubmit={handlePermissionSubmit} className="space-y-4">
-              <div>
+              <div className="space-y-1">
                 <label className="text-sm font-medium text-foreground">
                   Permission name
                 </label>
@@ -421,7 +435,7 @@ export default function AdminRolePermissionManager() {
                 />
               </div>
 
-              <div>
+              <div className="space-y-1">
                 <label className="text-sm font-medium text-foreground">
                   Description
                 </label>
@@ -460,40 +474,44 @@ export default function AdminRolePermissionManager() {
                 No permissions created yet.
               </p>
             )}
-            {permissions.map((permission) => (
-              <div
-                key={permission.id}
-                className="flex items-start justify-between rounded-lg border bg-background p-4 shadow-sm"
-              >
-                <div>
-                  <p className="text-base font-semibold">{permission.name}</p>
-                  {permission.description && (
-                    <p className="text-sm text-muted-foreground">
-                      {permission.description}
-                    </p>
-                  )}
+            <div className="divide-y rounded-lg border bg-card">
+              {permissions.map((permission) => (
+                <div
+                  key={permission.id}
+                  className="flex items-start justify-between gap-4 px-4 py-3"
+                >
+                  <div className="space-y-1">
+                    <p className="font-semibold">{permission.name}</p>
+                    {permission.description && (
+                      <p className="text-sm text-muted-foreground max-w-xl">
+                        {permission.description}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => handleSelectPermission(permission)}
+                      disabled={isSavingPermission}
+                    >
+                      <span className="sr-only">Edit permission</span>
+                      <Edit2 className="h-4 w-4" aria-hidden="true" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-destructive text-destructive"
+                      onClick={() => handlePermissionDelete(permission.id)}
+                      disabled={isSavingPermission}
+                    >
+                      <span className="sr-only">Delete permission</span>
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => handleSelectPermission(permission)}
-                    disabled={isSavingPermission}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-destructive text-destructive"
-                    onClick={() => handlePermissionDelete(permission.id)}
-                    disabled={isSavingPermission}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>

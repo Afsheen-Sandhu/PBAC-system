@@ -32,7 +32,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
-      <div className="container mx-auto flex h-14 items-center">
+      <div className="mx-auto flex h-14 max-w-6xl items-center px-4 lg:px-8">
         <div className="mr-4 flex">
           <Link className="mr-6 flex items-center space-x-2" href="/">
             <span className="font-bold sm:inline-block">My App</span>
