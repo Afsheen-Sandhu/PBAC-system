@@ -5,25 +5,7 @@ import User from "@/lib/models/User";
 import Role from "@/lib/models/Role";
 import Permission from "@/lib/models/Permission";
 import { revalidatePath } from "next/cache";
-
-function serializeUser(user: any) {
-  return {
-    _id: user._id.toString(),
-    name: user.name,
-    email: user.email,
-    role: user.role
-      ? {
-          id: user.role._id.toString(),
-          name: user.role.name,
-        }
-      : null,
-    permissions:
-      user.permissions?.map((perm: any) => ({
-        id: perm._id.toString(),
-        name: perm.name,
-      })) ?? [],
-  };
-}
+import { serializeUser } from "@/lib/utils/admin-users";
 
 export async function PATCH(
   req: NextRequest,
@@ -88,7 +70,9 @@ export async function PATCH(
 
     revalidatePath("/dashboard");
 
-    return NextResponse.json({ user: serializeUser(updatedUser) });
+    return NextResponse.json({
+      user: serializeUser(updatedUser, { includeRolePermissions: false }),
+    });
   } catch (error) {
     console.error("Admin user update failed:", error);
     return NextResponse.json(

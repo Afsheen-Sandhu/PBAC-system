@@ -4,30 +4,11 @@ import { requireAdmin } from "@/lib/auth/auth";
 import User from "@/lib/models/User";
 import Role from "@/lib/models/Role";
 import Permission from "@/lib/models/Permission";
-
-function serializeUser(user: any) {
-  return {
-    _id: user._id.toString(),
-    name: user.name,
-    email: user.email,
-    role: user.role
-      ? {
-          id: user.role._id.toString(),
-          name: user.role.name,
-          permissions:
-            user.role.permissions?.map((perm: any) => ({
-              id: perm._id.toString(),
-              name: perm.name,
-            })) ?? [],
-        }
-      : null,
-    permissions:
-      user.permissions?.map((perm: any) => ({
-        id: perm._id.toString(),
-        name: perm.name,
-      })) ?? [],
-  };
-}
+import {
+  serializePermission,
+  serializeRole,
+  serializeUser,
+} from "@/lib/utils/admin-users";
 
 export async function GET(req: NextRequest) {
   try {
@@ -61,19 +42,11 @@ export async function GET(req: NextRequest) {
     ]);
 
     return NextResponse.json({
-      users: users.map(serializeUser),
-      roles: roles.map((role: any) => ({
-        id: role._id.toString(),
-        name: role.name,
-        permissions: role.permissions.map((perm: any) => ({
-          id: perm._id.toString(),
-          name: perm.name,
-        })),
-      })),
-      permissions: permissions.map((permission) => ({
-        id: permission._id!.toString(),
-        name: permission.name,
-      })),
+      users: users.map((user) => serializeUser(user)),
+      roles: roles.map((role: any) => serializeRole(role)),
+      permissions: permissions.map((permission) =>
+        serializePermission(permission)
+      ),
     });
   } catch (error) {
     console.error("Admin users GET failed:", error);

@@ -24,7 +24,7 @@ export function Button({
     primary: "bg-primary text-primary-foreground hover:bg-primary/90",
     secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90",
     outline:
-      "border border-base-300 bg-base-100 text-foreground hover:bg-base-200",
+      "border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
   };
 
   const sizes: Record<NonNullable<ButtonProps["size"]>, string> = {

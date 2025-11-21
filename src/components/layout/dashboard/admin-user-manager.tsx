@@ -7,8 +7,6 @@ import {
 import type { AdminUser } from "@/types/user";
 import { useCallback } from "react";
 import { UserTable } from "./user-table";
-import { useDispatch } from "react-redux";
-import { setLoading } from "@/lib/store/slices/loading-slice";
 import {
   Table,
   TableHeader,
@@ -19,51 +17,32 @@ import {
 
 export default function AdminUserManager() {
   const { data, isLoading, isError, error, refetch } = useGetAdminUsersQuery();
-  const [updateUser] = useUpdateAdminUserMutation();
-  const dispatch = useDispatch();
+
+  const [updateUser, { isLoading: isUpdating, originalArgs }] =
+    useUpdateAdminUserMutation();
+
+  const activeUserId = (originalArgs as any)?.userId;
 
   const handleRoleChange = useCallback(
     async (userId: string, roleId: string) => {
-      dispatch(
-        setLoading({ isLoading: true, message: "Updating user role..." })
-      );
-      try {
-        const role = data?.roles.find((r) => r.id === roleId);
-        const permissionIds = role?.permissions
-          ? role.permissions.map((p) => p.id)
-          : [];
-        await updateUser({ userId, roleId: roleId || null, permissionIds });
-      } catch (err) {
-        console.error("Failed to update role:", err);
-      } finally {
-        dispatch(setLoading({ isLoading: false }));
-      }
+      const role = data?.roles.find((r) => r.id === roleId);
+      const permissionIds = role?.permissions?.map((p) => p.id) || [];
+
+      await updateUser({ userId, roleId: roleId || null, permissionIds });
     },
-    [updateUser, dispatch, data]
+    [updateUser, data]
   );
 
   const handlePermissionToggle = useCallback(
     async (user: AdminUser, permissionId: string, checked: boolean) => {
-      dispatch(
-        setLoading({
-          isLoading: true,
-          message: "Updating user permissions...",
-        })
-      );
       const currentIds = user.permissions?.map((p) => p.id) ?? [];
       const nextIds = checked
         ? Array.from(new Set([...currentIds, permissionId]))
         : currentIds.filter((id) => id !== permissionId);
 
-      try {
-        await updateUser({ userId: user._id, permissionIds: nextIds });
-      } catch (err) {
-        console.error("Failed to update permissions:", err);
-      } finally {
-        dispatch(setLoading({ isLoading: false }));
-      }
+      await updateUser({ userId: user._id, permissionIds: nextIds });
     },
-    [updateUser, dispatch]
+    [updateUser]
   );
 
   if (isLoading) {
@@ -109,12 +88,14 @@ export default function AdminUserManager() {
               <TableHead>Permissions</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {data.users.map((user) => {
               const userRole = data.roles.find(
                 (role) => role.id === user.role?.id
               );
               const rolePermissions = userRole?.permissions || [];
+
               return (
                 <UserTable
                   key={user._id}
@@ -123,6 +104,7 @@ export default function AdminUserManager() {
                   permissions={rolePermissions}
                   onRoleChange={handleRoleChange}
                   onPermissionToggle={handlePermissionToggle}
+                  rowLoading={isUpdating && activeUserId === user._id}
                 />
               );
             })}

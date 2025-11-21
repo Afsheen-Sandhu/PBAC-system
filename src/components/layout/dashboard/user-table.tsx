@@ -1,7 +1,9 @@
-import { memo } from "react";
 import type { AdminUser, PermissionItem, RoleInfo } from "@/types/user";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableRow, TableCell } from "@/components/ui/table";
+import { Select } from "@/components/ui/select";
+import { memo } from "react";
+import { Loader2 } from "lucide-react";
 
 interface UserRowProps {
   user: AdminUser;
@@ -13,6 +15,7 @@ interface UserRowProps {
     permissionId: string,
     checked: boolean
   ) => void;
+  rowLoading: boolean;
 }
 
 const UserTable = memo(
@@ -22,33 +25,32 @@ const UserTable = memo(
     permissions,
     onRoleChange,
     onPermissionToggle,
+    rowLoading,
   }: UserRowProps) => {
     return (
-      <TableRow>
+      <TableRow className="relative">
         <TableCell>
           <p className="font-medium">{user.name}</p>
           <p className="text-xs text-muted-foreground">{user.email}</p>
         </TableCell>
+
         <TableCell>
-          <select
-            className="w-full rounded-md border bg-background px-2 py-1 text-sm"
+          <Select
             value={user.role?.id ?? ""}
+            options={roles}
+            defaultOptionText="No Role"
+            disabled={rowLoading}
             onChange={(e) => onRoleChange(user._id, e.target.value || "")}
-          >
-            <option value="">No Role</option>
-            {roles.map((role) => (
-              <option key={role.id} value={role.id}>
-                {role.name}
-              </option>
-            ))}
-          </select>
+          />
         </TableCell>
+
         <TableCell>
           <div className="flex flex-wrap gap-2">
             {permissions.map((permission) => {
               const checked = user.permissions?.some(
                 (perm) => perm.id === permission.id
               );
+
               return (
                 <label
                   key={permission.id}
@@ -56,8 +58,13 @@ const UserTable = memo(
                 >
                   <Checkbox
                     checked={checked}
+                    disabled={rowLoading}
                     onChange={(e) =>
-                      onPermissionToggle(user, permission.id, e.target.checked)
+                      onPermissionToggle(
+                        user,
+                        permission.id,
+                        e.target.checked
+                      )
                     }
                   />
                   {permission.name}
@@ -66,6 +73,13 @@ const UserTable = memo(
             })}
           </div>
         </TableCell>
+
+      
+        {rowLoading && (
+          <td className="absolute inset-0 flex items-center justify-center bg-white/10 backdrop-blur-sm">
+            <Loader2 className="h-5 w-5 animate-spin text-primary" />
+          </td>
+        )}
       </TableRow>
     );
   }
@@ -73,4 +87,4 @@ const UserTable = memo(
 
 UserTable.displayName = "UserTable";
 
-export {  UserTable };
+export { UserTable };

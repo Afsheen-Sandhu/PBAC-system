@@ -41,40 +41,17 @@ export function Header() {
         <div className="flex flex-1 items-center justify-end gap-3">
           <ThemeToggle />
           {user ? (
-            <>
-              <Link
-                href="/dashboard"
-                className="rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
-              >
-                Dashboard
-              </Link>
-              <span className="hidden text-sm font-medium text-muted-foreground sm:inline-block">
-                Hi, {displayName}
-              </span>
-              <Button
-                onClick={handleLogout}
-                className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted/80 transition-colors"
-              >
-                Logout
-              </Button>
-            </>
+            <Button onClick={handleLogout} variant="secondary" size="md">
+              Logout
+            </Button>
           ) : (
-            <div className="flex items-center gap-2">
-              <Link
-                href="/login"
-                className="flex items-center gap-1 rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
-              >
-                <LogIn className="h-4 w-4" />
-                <span className="hidden sm:inline">Sign In</span>
-              </Link>
-              <Link
-                href="/signup"
-                className="flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-              >
-                <UserPlus className="h-4 w-4" />
-                <span className="hidden sm:inline">Sign Up</span>
-              </Link>
-            </div>
+            <Link
+              href="/login"
+              className="flex items-center gap-1 rounded-md border border-border bg-primary px-3 py-1.5 text-sm font-medium text-secondary transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            >
+              <LogIn className="h-4 w-4" />
+              <span className="hidden sm:inline">Sign In</span>
+            </Link>
           )}
         </div>
       </div>

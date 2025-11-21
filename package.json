@@ -18,11 +18,14 @@
     "*.{ts,tsx,js,jsx,css,md,json}": "prettier --write"
   },
   "dependencies": {
+    "@next/eslint-plugin-next": "^16.0.3",
     "@reduxjs/toolkit": "^2.9.2",
     "axios": "^1.12.2",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.5.0",
     "jose": "^6.1.2",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.554.0",
@@ -33,7 +36,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.2.0",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript-eslint": "^8.47.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.1",

@@ -4,14 +4,14 @@ import { BaseQueryFn } from "@reduxjs/toolkit/query";
 import { AxiosRequestConfig, AxiosError } from "axios";
 import { RootState } from "@/lib/store/store";
 
-// ✅ Type for error responses
+
 export interface AxiosBaseQueryError {
   status?: number;
   data?: unknown;
   message?: string;
 }
 
-// ✅ Arguments for each query/mutation
+
 export interface AxiosBaseQueryArgs {
   url: string;
   method: AxiosRequestConfig["method"];
