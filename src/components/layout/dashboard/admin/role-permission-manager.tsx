@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Edit2, Trash2 } from "lucide-react";
 import type { RoleInfo, PermissionItem } from "@/types/user";
 import {
   useGetAdminRolesQuery,
@@ -13,25 +12,12 @@ import {
   useUpdateAdminPermissionMutation,
   useDeleteAdminPermissionMutation,
 } from "@/services/user-api";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-
-const textFieldClass =
-  "w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
-
-type RoleFormState = {
-  id: string | null;
-  name: string;
-  description: string;
-  permissionIds: string[];
-};
-
-type PermissionFormState = {
-  id: string | null;
-  name: string;
-  description: string;
-};
+import RoleEditor, {
+  type RoleFormState,
+} from "./role-editor";
+import PermissionEditor, {
+  type PermissionFormState,
+} from "./permission-editor";
 
 const initialRoleForm: RoleFormState = {
   id: null,
@@ -89,6 +75,20 @@ export default function AdminRolePermissionManager() {
     () => new Set(roleForm.permissionIds),
     [roleForm.permissionIds]
   );
+
+  const handleRoleFieldChange = (
+    field: keyof RoleFormState,
+    value: string
+  ) => {
+    setRoleForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handlePermissionFieldChange = (
+    field: keyof PermissionFormState,
+    value: string
+  ) => {
+    setPermissionForm((prev) => ({ ...prev, [field]: value }));
+  };
 
   const resetRoleForm = () => setRoleForm(initialRoleForm);
   const resetPermissionForm = () => setPermissionForm(initialPermissionForm);
@@ -224,297 +224,34 @@ export default function AdminRolePermissionManager() {
       </div>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-        <div className="space-y-4">
-          <div className="rounded-lg border bg-background p-5 shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">
-                {roleForm.id ? "Edit Role" : "Create Role"}
-              </h3>
-              {roleForm.id && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={resetRoleForm}
-                >
-                  Cancel
-                </Button>
-              )}
-            </div>
-
-            <form onSubmit={handleRoleSubmit} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-foreground">
-                  Role name
-                </label>
-                <Input
-                  type="text"
-                  value={roleForm.name}
-                  onChange={(e) =>
-                    setRoleForm((prev) => ({ ...prev, name: e.target.value }))
-                  }
-                  placeholder="e.g., Instructor"
-                  className={textFieldClass}
-                  required
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-foreground">
-                  Description
-                </label>
-                <textarea
-                  value={roleForm.description}
-                  onChange={(e) =>
-                    setRoleForm((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
-                  }
-                  placeholder="Optional role summary"
-                  className={`${textFieldClass} min-h-[80px]`}
-                />
-              </div>
-
-              <div className="space-y-1">
-                <div className="mb-2 flex items-center justify-between">
-                  <label className="text-sm font-medium text-foreground">
-                    Permissions
-                  </label>
-                  {permissionsLoading && (
-                    <span className="text-xs text-muted-foreground">
-                      Loading…
-                    </span>
-                  )}
-                </div>
-                <div className="rounded-md border bg-muted/40 p-3">
-                  {permissions.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
-                      No permissions yet. You can still save the role.
-                    </p>
-                  ) : (
-                    <div className="grid max-h-52 grid-cols-1 gap-2 overflow-y-auto md:grid-cols-2">
-                      {permissions.map((permission) => (
-                        <label
-                          key={permission.id}
-                          className="flex items-start gap-2 rounded-md bg-background px-2 py-1 text-sm shadow-xs"
-                        >
-                          <Checkbox
-                            checked={activePermissionIds.has(permission.id)}
-                            onChange={() =>
-                              handleRolePermissionToggle(permission.id)
-                            }
-                            disabled={isSavingRole}
-                          />
-                          <div>
-                            <p className="font-medium leading-snug">
-                              {permission.name}
-                            </p>
-                            {permission.description && (
-                              <p className="text-xs text-muted-foreground">
-                                {permission.description}
-                              </p>
-                            )}
-                          </div>
-                        </label>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <Button type="submit" disabled={isSavingRole}>
-                {roleForm.id ? "Update role" : "Create role"}
-              </Button>
-            </form>
-          </div>
-
-          <div className="mt-4 space-y-3">
-            {rolesLoading && (
-              <p className="text-sm text-muted-foreground">Loading roles…</p>
-            )}
-            {rolesStatusMessage && (
-              <p className="text-sm text-destructive">{rolesStatusMessage}</p>
-            )}
-            {!rolesLoading && roles.length === 0 && (
-              <p className="text-sm text-muted-foreground">
-                No roles have been created yet.
-              </p>
-            )}
-            <div className="divide-y rounded-lg border bg-card">
-              {roles.map((role) => (
-                <div
-                  key={role.id}
-                  className="flex flex-wrap items-start justify-between gap-4 px-4 py-3"
-                >
-                  <div className="space-y-1">
-                    <p className="font-semibold">{role.name}</p>
-                    {role.description && (
-                      <p className="text-sm text-muted-foreground max-w-xl">
-                        {role.description}
-                      </p>
-                    )}
-                    <div className="mt-1 flex flex-wrap gap-1.5">
-                      {role.permissions?.length ? (
-                        role.permissions.map((perm) => (
-                          <span
-                            key={perm.id}
-                            className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
-                          >
-                            {perm.name}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-xs text-muted-foreground">
-                          No permissions assigned
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => handleSelectRole(role)}
-                      disabled={isSavingRole}
-                    >
-                      <span className="sr-only">Edit role</span>
-                      <Edit2 className="h-4 w-4" aria-hidden="true" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-destructive text-destructive"
-                      onClick={() => handleRoleDelete(role.id)}
-                      disabled={isSavingRole}
-                    >
-                      <span className="sr-only">Delete role</span>
-                      <Trash2 className="h-4 w-4" aria-hidden="true" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="rounded-lg border bg-background p-5 shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">
-                {permissionForm.id ? "Edit Permission" : "Create Permission"}
-              </h3>
-              {permissionForm.id && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={resetPermissionForm}
-                >
-                  Cancel
-                </Button>
-              )}
-            </div>
-
-            <form onSubmit={handlePermissionSubmit} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-foreground">
-                  Permission name
-                </label>
-                <Input
-                  type="text"
-                  value={permissionForm.name}
-                  onChange={(e) =>
-                    setPermissionForm((prev) => ({
-                      ...prev,
-                      name: e.target.value,
-                    }))
-                  }
-                  placeholder="e.g., create_course"
-                  className={textFieldClass}
-                  required
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-foreground">
-                  Description
-                </label>
-                <textarea
-                  value={permissionForm.description}
-                  onChange={(e) =>
-                    setPermissionForm((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
-                  }
-                  placeholder="Optional description"
-                  className={`${textFieldClass} min-h-[80px]`}
-                />
-              </div>
-
-              <Button type="submit" disabled={isSavingPermission}>
-                {permissionForm.id ? "Update permission" : "Create permission"}
-              </Button>
-            </form>
-          </div>
-
-          <div className="mt-4 space-y-3">
-            {permissionsLoading && (
-              <p className="text-sm text-muted-foreground">
-                Loading permissions…
-              </p>
-            )}
-            {permissionsStatusMessage && (
-              <p className="text-sm text-destructive">
-                {permissionsStatusMessage}
-              </p>
-            )}
-            {!permissionsLoading && permissions.length === 0 && (
-              <p className="text-sm text-muted-foreground">
-                No permissions created yet.
-              </p>
-            )}
-            <div className="divide-y rounded-lg border bg-card">
-              {permissions.map((permission) => (
-                <div
-                  key={permission.id}
-                  className="flex items-start justify-between gap-4 px-4 py-3"
-                >
-                  <div className="space-y-1">
-                    <p className="font-semibold">{permission.name}</p>
-                    {permission.description && (
-                      <p className="text-sm text-muted-foreground max-w-xl">
-                        {permission.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => handleSelectPermission(permission)}
-                      disabled={isSavingPermission}
-                    >
-                      <span className="sr-only">Edit permission</span>
-                      <Edit2 className="h-4 w-4" aria-hidden="true" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-destructive text-destructive"
-                      onClick={() => handlePermissionDelete(permission.id)}
-                      disabled={isSavingPermission}
-                    >
-                      <span className="sr-only">Delete permission</span>
-                      <Trash2 className="h-4 w-4" aria-hidden="true" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <RoleEditor
+          roleForm={roleForm}
+          roles={roles}
+          permissions={permissions}
+          permissionsLoading={permissionsLoading}
+          rolesLoading={rolesLoading}
+          rolesStatusMessage={rolesStatusMessage}
+          isSavingRole={isSavingRole}
+          activePermissionIds={activePermissionIds}
+          onRoleFieldChange={handleRoleFieldChange}
+          onSubmitRole={handleRoleSubmit}
+          onResetRole={resetRoleForm}
+          onTogglePermission={handleRolePermissionToggle}
+          onSelectRole={handleSelectRole}
+          onDeleteRole={handleRoleDelete}
+        />
+        <PermissionEditor
+          permissionForm={permissionForm}
+          permissions={permissions}
+          permissionsLoading={permissionsLoading}
+          permissionsStatusMessage={permissionsStatusMessage}
+          isSavingPermission={isSavingPermission}
+          onPermissionFieldChange={handlePermissionFieldChange}
+          onSubmitPermission={handlePermissionSubmit}
+          onResetPermission={resetPermissionForm}
+          onSelectPermission={handleSelectPermission}
+          onDeletePermission={handlePermissionDelete}
+        />
       </div>
     </section>
   );

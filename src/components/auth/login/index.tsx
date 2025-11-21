@@ -45,7 +45,12 @@ export default function LoginPage() {
       footerLinkHref="/signup"
       footerLinkLabel="Create one"
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4"
+        method="post"
+        autoComplete="off"
+      >
         <Input
           label="Email"
           name="email"

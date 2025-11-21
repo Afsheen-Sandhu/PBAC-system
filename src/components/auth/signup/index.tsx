@@ -40,7 +40,12 @@ export default function RegisterPage() {
       footerLinkHref="/login"
       footerLinkLabel="Sign in"
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4"
+        method="post"
+        autoComplete="off"
+      >
         <Input
           label="Name"
           name="name"
