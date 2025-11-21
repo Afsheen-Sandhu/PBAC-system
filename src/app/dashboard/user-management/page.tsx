@@ -1,13 +1,11 @@
 import AdminUserManager from "@/components/layout/dashboard/admin/user-manager";
 import DashboardHeader from "@/components/layout/dashboard/overview/dashboard-header";
 import DashboardSidebar from "@/components/layout/dashboard/dashboard-sidebar";
-import { getDashboardUser } from "@/lib/utils/dashboard";
-import { getRoleName } from "@/components/layout/dashboard/overview/dashboard-config";
+import { requireAdminUser } from "@/lib/utils/dashboard";
 
 export default async function UserManagementPage() {
-  const user = await getDashboardUser();
-  const roleName = getRoleName(user.role as any)?.toLowerCase() ?? "default";
-  const isAdmin = roleName === "admin";
+  const user = await requireAdminUser();
+  const isAdmin = true;
 
   return (
     <section className="mt-10 px-6 pb-16 lg:px-10">

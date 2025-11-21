@@ -39,6 +39,19 @@ async function hydrateUser(userId: string) {
   } as UserType;
 }
 
+function resolveRoleName(
+  role: UserType["role"]
+): string | null {
+  if (!role) return null;
+  if (typeof role === "string") return role;
+  return role.name ?? null;
+}
+
+export function isAdminUser(user: UserType | null | undefined) {
+  const roleName = resolveRoleName(user?.role)?.toLowerCase() ?? null;
+  return roleName === "admin";
+}
+
 export async function getDashboardUser() {
   const session = await getUser();
 
@@ -53,5 +66,15 @@ export async function getDashboardUser() {
   }
 
   return JSON.parse(JSON.stringify(user)) as UserType;
+}
+
+export async function requireAdminUser() {
+  const user = await getDashboardUser();
+
+  if (!isAdminUser(user)) {
+    redirect("/dashboard");
+  }
+
+  return user;
 }
 
