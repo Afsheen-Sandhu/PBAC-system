@@ -78,7 +78,7 @@ export const SECTION_CONFIG: Record<string, SectionConfigType> = {
           <ul className="space-y-1 text-sm">
             {actions.map((action) => (
               <li key={action} className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-sky-500" />
+                <CheckCircle2 className="h-4 w-4 text-primary" />
                 <span>{action}</span>
               </li>
             ))}
@@ -106,13 +106,13 @@ export const SECTION_CONFIG: Record<string, SectionConfigType> = {
         <div className="space-y-3 text-sm text-muted-foreground">
           {canViewCourse && (
             <p className="flex items-center gap-2 text-foreground">
-              <CheckCircle2 className="h-4 w-4 text-indigo-500" />
+              <CheckCircle2 className="h-4 w-4 text-primary" />
               <span>Access to course outlines & schedules.</span>
             </p>
           )}
           {canViewResults && (
             <p className="flex items-center gap-2 text-foreground">
-              <CheckCircle2 className="h-4 w-4 text-indigo-500" />
+              <CheckCircle2 className="h-4 w-4 text-primary" />
               <span>Access to performance dashboards.</span>
             </p>
           )}

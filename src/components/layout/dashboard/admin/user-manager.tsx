@@ -14,6 +14,7 @@ import {
   TableRow,
   TableHead,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 export default function AdminUserManager() {
   const { data, isLoading, isError, error, refetch } = useGetAdminUsersQuery();
@@ -60,12 +61,12 @@ export default function AdminUserManager() {
         <p className="text-sm text-destructive/80">
           {(error as any)?.data?.error || "Please try again later."}
         </p>
-        <button
+        <Button
           className="mt-3 rounded-md border px-3 py-1 text-sm"
           onClick={() => refetch()}
         >
           Retry
-        </button>
+        </Button>
       </div>
     );
   }

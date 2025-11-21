@@ -15,6 +15,7 @@ import {
 } from "@/services/user-api";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 
 const textFieldClass =
   "w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
@@ -246,7 +247,7 @@ export default function AdminRolePermissionManager() {
                 <label className="text-sm font-medium text-foreground">
                   Role name
                 </label>
-                <input
+                <Input
                   type="text"
                   value={roleForm.name}
                   onChange={(e) =>
@@ -420,7 +421,7 @@ export default function AdminRolePermissionManager() {
                 <label className="text-sm font-medium text-foreground">
                   Permission name
                 </label>
-                <input
+                <Input
                   type="text"
                   value={permissionForm.name}
                   onChange={(e) =>

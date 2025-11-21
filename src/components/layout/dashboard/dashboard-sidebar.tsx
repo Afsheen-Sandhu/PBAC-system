@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import type { User } from "@/types/user";
-import { getRoleName } from "./dashboard-config";
+import { getRoleName } from "./overview/dashboard-config";
 import { cn } from "@/lib/utils";
 
 type DashboardSidebarProps = {

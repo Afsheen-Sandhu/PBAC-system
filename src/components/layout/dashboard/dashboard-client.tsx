@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import type { User } from "@/types/user";
 import { useAppDispatch } from "@/lib/hooks/store-hooks";
 import { setAuth } from "@/lib/store/slices/auth-slice";
-import DashboardHeader from "./dashboard-header";
-import DashboardSections from "./dashboard-sections";
+import DashboardHeader from "./overview/dashboard-header";
+import DashboardSections from "./overview/dashboard-sections";
 import DashboardSidebar from "./dashboard-sidebar";
-import { getRoleName } from "./dashboard-config";
+import { getRoleName } from "./overview/dashboard-config";
 
 interface DashboardClientProps {
   user: User;
@@ -24,7 +24,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
   const isAdmin = roleName === "admin";
 
   return (
-    <section className=" mt-12  px-4 pb-16">
+    <section className="mt-10 px-6 pb-16 lg:px-10">
       <div className="flex flex-col gap-6 lg:flex-row">
         <DashboardSidebar user={user} isAdmin={isAdmin} />
         <div className="flex-1 space-y-8">

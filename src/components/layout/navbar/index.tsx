@@ -31,8 +31,8 @@ export function Header() {
   }, [user, dispatch]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background">
-      <div className="mx-auto flex h-14 max-w-6xl items-center px-4 lg:px-8">
+    <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-card/90 px-6 backdrop-blur supports-[backdrop-filter]:bg-card/70 lg:px-10">
+      <div className="flex h-16 w-full items-center">
         <div className="mr-4 flex">
           <Link className="mr-6 flex items-center space-x-2" href="/">
             <span className="font-bold sm:inline-block">My App</span>
@@ -47,7 +47,7 @@ export function Header() {
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-1 rounded-md border border-border bg-primary px-3 py-1.5 text-sm font-medium text-secondary transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              className="flex items-center gap-1 rounded-md border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <LogIn className="h-4 w-4" />
               <span className="hidden sm:inline">Sign In</span>
