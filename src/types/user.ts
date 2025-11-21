@@ -1,12 +1,14 @@
 export interface RoleInfo {
   id: string;
   name: string;
+  description?: string | null;
   permissions?: PermissionItem[];
 }
 
 export interface PermissionItem {
   id: string;
   name: string;
+  description?: string | null;
 }
 
 export interface User {

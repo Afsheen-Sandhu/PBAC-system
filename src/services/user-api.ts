@@ -4,6 +4,8 @@ import {
   LoginRequest,
   LoginResponse,
   AdminUsersResponse,
+  RoleInfo,
+  PermissionItem,
 } from "@/types/user";
 
 export const userApi = apiSlice.injectEndpoints({
@@ -60,6 +62,91 @@ export const userApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["AdminUsers"],
     }),
+
+    getAdminRoles: builder.query<{ roles: RoleInfo[] }, void>({
+      query: () => ({
+        url: "/api/admin/roles",
+        method: "get",
+      }),
+      providesTags: ["AdminRoles"],
+    }),
+
+    createAdminRole: builder.mutation<
+      { role: RoleInfo },
+      { name: string; description?: string; permissionIds?: string[] }
+    >({
+      query: (body) => ({
+        url: "/api/admin/roles",
+        method: "post",
+        data: body,
+      }),
+      invalidatesTags: ["AdminRoles", "AdminUsers"],
+    }),
+
+    updateAdminRole: builder.mutation<
+      { role: RoleInfo },
+      {
+        roleId: string;
+        name?: string;
+        description?: string | null;
+        permissionIds?: string[];
+      }
+    >({
+      query: ({ roleId, ...body }) => ({
+        url: `/api/admin/roles/${roleId}`,
+        method: "patch",
+        data: body,
+      }),
+      invalidatesTags: ["AdminRoles", "AdminUsers"],
+    }),
+
+    deleteAdminRole: builder.mutation<{ success: boolean }, string>({
+      query: (roleId) => ({
+        url: `/api/admin/roles/${roleId}`,
+        method: "delete",
+      }),
+      invalidatesTags: ["AdminRoles", "AdminUsers"],
+    }),
+
+    getAdminPermissions: builder.query<{ permissions: PermissionItem[] }, void>({
+      query: () => ({
+        url: "/api/admin/permissions",
+        method: "get",
+      }),
+      providesTags: ["AdminPermissions"],
+    }),
+
+    createAdminPermission: builder.mutation<
+      { permission: PermissionItem },
+      { name: string; description?: string }
+    >({
+      query: (body) => ({
+        url: "/api/admin/permissions",
+        method: "post",
+        data: body,
+      }),
+      invalidatesTags: ["AdminPermissions", "AdminRoles", "AdminUsers"],
+    }),
+
+    updateAdminPermission: builder.mutation<
+      { permission: PermissionItem },
+      { permissionId: string; name?: string; description?: string | null }
+    >({
+      query: ({ permissionId, ...body }) => ({
+        url: `/api/admin/permissions/${permissionId}`,
+        method: "patch",
+        data: body,
+      }),
+      invalidatesTags: ["AdminPermissions", "AdminRoles", "AdminUsers"],
+    }),
+
+    deleteAdminPermission: builder.mutation<{ success: boolean }, string>({
+      query: (permissionId) => ({
+        url: `/api/admin/permissions/${permissionId}`,
+        method: "delete",
+      }),
+      invalidatesTags: ["AdminPermissions", "AdminRoles", "AdminUsers"],
+    }),
   }),
 
   overrideExisting: false,
@@ -71,4 +158,12 @@ export const {
   useSignupUserMutation,
   useGetAdminUsersQuery,
   useUpdateAdminUserMutation,
+  useGetAdminRolesQuery,
+  useCreateAdminRoleMutation,
+  useUpdateAdminRoleMutation,
+  useDeleteAdminRoleMutation,
+  useGetAdminPermissionsQuery,
+  useCreateAdminPermissionMutation,
+  useUpdateAdminPermissionMutation,
+  useDeleteAdminPermissionMutation,
 } = userApi;
