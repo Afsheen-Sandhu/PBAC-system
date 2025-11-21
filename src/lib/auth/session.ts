@@ -14,7 +14,7 @@ export async function verifyToken(token: string): Promise<AuthPayload | null> {
       token,
       new TextEncoder().encode(secret)
     );
-    return payload as AuthPayload;
+    return payload as unknown as AuthPayload;
   } catch (error) {
     console.error("JWT verification failed:", error);
     return null;
@@ -22,7 +22,8 @@ export async function verifyToken(token: string): Promise<AuthPayload | null> {
 }
 
 export async function getUser(): Promise<AuthPayload | null> {
-  const token = (await cookies().get("token"))?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
   if (!token) return null;
   return verifyToken(token);
 }

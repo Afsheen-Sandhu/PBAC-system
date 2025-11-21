@@ -15,7 +15,7 @@ interface UserRowProps {
   ) => void;
 }
 
-const UserRow = memo(
+const UserTable = memo(
   ({
     user,
     roles,
@@ -71,6 +71,6 @@ const UserRow = memo(
   }
 );
 
-UserRow.displayName = "UserRow";
+UserTable.displayName = "UserTable";
 
-export { UserRow };
+export {  UserTable };

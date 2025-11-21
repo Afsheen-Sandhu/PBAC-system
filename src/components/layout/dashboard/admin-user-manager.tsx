@@ -4,9 +4,9 @@ import {
   useGetAdminUsersQuery,
   useUpdateAdminUserMutation,
 } from "@/services/user-api";
-import type { AdminUser, PermissionItem, RoleInfo } from "@/types/user";
+import type { AdminUser } from "@/types/user";
 import { useCallback } from "react";
-import { UserRow } from "./user-table";
+import { UserTable } from "./user-table";
 import { useDispatch } from "react-redux";
 import { setLoading } from "@/lib/store/slices/loading-slice";
 import {
@@ -116,7 +116,7 @@ export default function AdminUserManager() {
               );
               const rolePermissions = userRole?.permissions || [];
               return (
-                <UserRow
+                <UserTable
                   key={user._id}
                   user={user}
                   roles={data.roles}
